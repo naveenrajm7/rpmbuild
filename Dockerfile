@@ -5,22 +5,23 @@ FROM centos:7
 COPY . .
 
 # Installing tools needed for rpmbuild
-RUN yum install -y gcc rpm-build rpm-devel rpmlint make bash coreutils rpmdevtools which nodejs
+RUN yum install -y gcc rpm-build rpm-devel rpmlint make rpmdevtools
 
 # LOG: check contents
-RUN pwd && ls -la && node -v
+RUN pwd && ls -la 
 
 # Creting rpmbuild directory tree 
 RUN rpmdev-setuptree
 
 # Setting up node to run our JS file
-RUN curl https://raw.githubusercontent.com/creationix/nvm/v0.13.1/install.sh | bash
+# Download Node Linux binary
+RUN cd ~ && wget https://nodejs.org/dist/v12.16.1/node-v12.16.1-linux-x64.tar.xz
 
-# Source bash_profile to activate nvm
-RUN source ~/.bash_profile
+# Extract and install
+RUN sudo tar --strip-components 1 -xzvf node-v* -C /usr/local
 
-# Install Node v12 from nvm
-RUN nvm install v12.16.1
+# Verify node version
+RUN node --version
 
 # Install all dependecies to execute main.js
 RUN npm install --production
