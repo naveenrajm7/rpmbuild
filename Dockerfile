@@ -5,7 +5,7 @@ FROM centos/nodejs-12-centos7
 COPY . .
 
 # Installing tools needed for rpmbuild
-RUN yum install -y gcc rpm-build rpm-devel rpmlint make bash coreutils rpmdevtools
+RUN sudo yum install -y gcc rpm-build rpm-devel rpmlint make bash coreutils rpmdevtools
 
 # LOG: check contents
 RUN pwd && ls -la
