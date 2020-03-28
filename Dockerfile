@@ -18,7 +18,7 @@ RUN rpmdev-setuptree
 RUN cd ~ && curl -O https://nodejs.org/dist/v12.16.1/node-v12.16.1-linux-x64.tar.xz
 
 # Extract and install
-RUN sudo tar --strip-components 1 -xzvf node-v* -C /usr/local
+RUN tar --strip-components 1 -xzvf node-v* -C /usr/local
 
 # Verify node version
 RUN node --version
