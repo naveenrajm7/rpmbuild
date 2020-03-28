@@ -5,10 +5,10 @@ FROM centos:7
 COPY . .
 
 # Installing tools needed for rpmbuild
-RUN yum install -y gcc rpm-build rpm-devel rpmlint make bash coreutils rpmdevtools which
+RUN yum install -y gcc rpm-build rpm-devel rpmlint make bash coreutils rpmdevtools which nodejs
 
 # LOG: check contents
-RUN pwd && ls -la
+RUN pwd && ls -la && node -v
 
 # Creting rpmbuild directory tree 
 RUN rpmdev-setuptree
