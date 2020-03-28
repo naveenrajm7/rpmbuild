@@ -1,7 +1,14 @@
-FROM node:slim
+FROM centos:7
 
 COPY . .
 
-RUN npm install --production
+RUN yum install -y gcc rpm-build rpm-devel rpmlint make bash coreutils rpmdevtools
 
-ENTRYPOINT ["node", "/lib/main.js"]
+RUN rpmdev-setuptree
+
+COPY cello.spec ~/rpmbuild/SPECS/
+
+RUN rpmbuild -ba ~/rpmbuild/SPECS/cello.spec
+
+RUN tree ~/rpmbuild
+
