@@ -1,5 +1,5 @@
-# Using CentOS as base image to support rpmbuild
-FROM centos:7
+# Using CentOS 7 with Node 12 as base image to support rpmbuild
+FROM centos/nodejs-12-centos7
 
 # Copying all contents of rpmbuild repo inside container
 COPY . .
