@@ -1,16 +1,22 @@
+# Using CentOS as base image to support rpmbuild
 FROM centos:7
 
+# Copying all contents of rpmbuild repo inside container
 COPY . .
 
+# Installing tools needed for rpmbuild
 RUN yum install -y gcc rpm-build rpm-devel rpmlint make bash coreutils rpmdevtools
 
+# LOG: check contents
 RUN pwd && ls -la
 
+# Creting rpmbuild directory tree 
 RUN rpmdev-setuptree
 
-COPY cello.spec ~/rpmbuild/SPECS/
+# Setting up node to run our JS file
+RUN npm install --production
 
-RUN rpmbuild -ba ~/rpmbuild/SPECS/cello.spec
-
-RUN tree ~/rpmbuild
-
+# All remaining logic goes inside main.js , 
+# where we have access to both tools of this container and 
+# contents of git repo at /github/workspace
+ENTRYPOINT ["node", "/lib/main.js"]
