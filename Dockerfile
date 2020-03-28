@@ -15,8 +15,14 @@ RUN rpmdev-setuptree
 
 # Setting up node to run our JS file
 RUN curl https://raw.githubusercontent.com/creationix/nvm/v0.13.1/install.sh | bash
+
+# Source bash_profile to activate nvm
+RUN source ~/.bash_profile
+
+# Install Node v12 from nvm
 RUN nvm install v12.16.1
 
+# Install all dependecies to execute main.js
 RUN npm install --production
 
 # All remaining logic goes inside main.js , 
