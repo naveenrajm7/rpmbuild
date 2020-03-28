@@ -4,6 +4,8 @@ COPY . .
 
 RUN yum install -y gcc rpm-build rpm-devel rpmlint make bash coreutils rpmdevtools
 
+RUN pwd && ls -la
+
 RUN rpmdev-setuptree
 
 COPY cello.spec ~/rpmbuild/SPECS/
