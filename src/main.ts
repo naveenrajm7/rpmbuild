@@ -28,23 +28,24 @@ async function run() {
     await io.cp('/github/workspace/cello.spec', '/github/home/rpmbuild/SPECS/');
 
     // Get tar.gz file of release 
-    await download_tar(
-      owner,
-      repo,
-      ref
-    ).then( function(filePath){
-      console.log(`Tar Path for copy : ${filePath}`);
-      io.cp(`${repo}-1.0.tar.gz`, '/github/home/rpmbuild/SOURCES/');
-    }).catch(function(error){
-      console.log(error);
-    });
+    // await download_tar(
+    //   owner,
+    //   repo,
+    //   ref
+    // ).then( function(filePath){
+    //   console.log(`Tar Path for copy : ${filePath}`);
+    //   io.cp(`${repo}-1.0.tar.gz`, '/github/home/rpmbuild/SOURCES/');
+    // }).catch(function(error){
+    //   console.log(error);
+    // });
 
+    await exec.exec('curl -L --output cello-1.0.0.tar.gz https://github.com/naveenrajm7/cello/archive/v1.0.0.tar.gz')
     //console.log(`Tar Path for copy : ${tarBallPath}`);
     await exec.exec('echo "$HOME"');
 
     // Get repo files from /github/workspace/
     await exec.exec('ls -la ');
-    await io.cp(`${repo}-1.0.tar.gz`, '/github/home/rpmbuild/SOURCES/');
+    await io.cp(`${repo}-1.0.0.tar.gz`, '/github/home/rpmbuild/SOURCES/');
 
     // Copy tar.gz file to /root/rpmbuild/SOURCES
     // make sure the name of tar.gz is same as given in Source of spec file
