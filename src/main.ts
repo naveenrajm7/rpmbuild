@@ -30,8 +30,8 @@ async function run() {
     await exec.exec(`cd /tmp/ && tar -czvf ${repo}.tar.gz ${repo}`);
 
     // Get repo files from /github/workspace/
-    await exec.exec('ls -la ');
-    await io.cp(`/tmp/${repo}.tar.gz`, '/github/home/rpmbuild/SOURCES/');
+    await exec.exec('ls -la /tmp');
+    await exec.exec(`cp /tmp/${repo}.tar.gz /github/home/rpmbuild/SOURCES/`);
 
     // Copy tar.gz file to /root/rpmbuild/SOURCES
     // make sure the name of tar.gz is same as given in Source of spec file
