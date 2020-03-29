@@ -10,20 +10,22 @@ async function download_archive(owner, repo, ref ) {
 
         const archive_format = "tarball";
 
-        const downloadLocation = octokit.repos.getArchiveLink({
+        octokit.repos.getArchiveLink({
             owner,
             repo,
             archive_format,
             ref
+        }).then(( { data }) => {
+            console.log(data)
         });
 
-        console.log(`Download Location : ${downloadLocation}`);    
+        //console.log(`Download Location : ${downloadLocation}`);    
         
-        const tarBallPath = await tc.downloadTool(downloadLocation);
+        //const tarBallPath = await tc.downloadTool(downloadLocation);
 
-        console.log(`Tarball Location : ${tarBallPath}`);
+        //console.log(`Tarball Location : ${tarBallPath}`);
 
-        return tarBallPath;
+        //return tarBallPath;
 
     } catch (error) {
         core.setFailed(error.message);

@@ -12,7 +12,7 @@ async function run() {
 
     const owner = context.repo.owner
     const repo = context.repo.repo
-    const ref = context.repo.ref
+    const ref = context.ref
 
     console.log(`We can even get context data, like the owner: ${owner}, repo: ${repo}, ref: ${ref}`);
 
