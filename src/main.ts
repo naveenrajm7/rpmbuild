@@ -74,7 +74,7 @@ async function run() {
     };
     options.cwd = '/github/home/rpmbuild/SRPMS/';
 
-    await exec.exec('ls', options);
+    await exec.exec('ls', [ '-C' ], options);
 
     core.setOutput("source_rpm_path", `/github/home/rpmbuild/SRPMS/${myOutput}`); // make option to upload source rpm
 
