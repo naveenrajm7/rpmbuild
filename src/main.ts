@@ -19,33 +19,19 @@ async function run() {
     const specFile = core.getInput('specFile');
     console.log(`Hello ${specFile} from inside a container`);
 
+    // setup rpm tree
     await exec.exec('rpmdev-setuptree');
 
-    // Get repo files from /github/workspace/
-    await exec.exec('ls -la ');
-
     // Copy spec file from path specFile to /root/rpmbuild/SPECS/
-    await io.cp('/github/workspace/cello.spec', '/github/home/rpmbuild/SPECS/');
+    await io.cp(`/github/workspace/${specFile}`, '/github/home/rpmbuild/SPECS/');
 
-    // Get tar.gz file of release 
-    // await download_tar(
-    //   owner,
-    //   repo,
-    //   ref
-    // ).then( function(filePath){
-    //   console.log(`Tar Path for copy : ${filePath}`);
-    //   io.cp(`${repo}-1.0.tar.gz`, '/github/home/rpmbuild/SOURCES/');
-    // }).catch(function(error){
-    //   console.log(error);
-    // });
+    await exec.exec(`cp -R /github/workspace/ /tmp/${repo}`);
 
-    await exec.exec('curl -L --output cello-1.0.0.tar.gz https://github.com/naveenrajm7/cello/archive/v1.0.0.tar.gz')
-    //console.log(`Tar Path for copy : ${tarBallPath}`);
-    await exec.exec('echo "$HOME"');
+    await exec.exec(`cd /tmp/ && tar -czvf ${repo}.tar.gz ${repo}`);
 
     // Get repo files from /github/workspace/
     await exec.exec('ls -la ');
-    await io.cp(`${repo}-1.0.0.tar.gz`, '/github/home/rpmbuild/SOURCES/');
+    await io.cp(`/tmp/${repo}.tar.gz`, '/github/home/rpmbuild/SOURCES/');
 
     // Copy tar.gz file to /root/rpmbuild/SOURCES
     // make sure the name of tar.gz is same as given in Source of spec file
@@ -54,7 +40,7 @@ async function run() {
     // Execute rpmbuild 
     try {
       await exec.exec(
-        `rpmbuild -ba /github/home/rpmbuild/SPECS/cello.spec`
+        `rpmbuild -ba /github/home/rpmbuild/SPECS/${specFile}`
       );
     } catch (err) {
       core.setFailed(`action failed with error: ${err}`);
@@ -68,7 +54,23 @@ async function run() {
     // actions/upload-release-asset 
     // If you want to upload yourself , need to write api call to upload as asset
     //core.setOutput("rpmPath", rpmPath)
-    core.setOutput("source_rpm_path", "/github/home/rpmbuild/SRPMS")  // make option to upload source rpm
+    let myOutput = '';
+    let myError = '';
+
+    const options: any = { };
+    options.listeners = {
+      stdout: (data: Buffer) => {
+        myOutput += data.toString();
+      },
+      stderr: (data: Buffer) => {
+        myError += data.toString();
+      }
+    };
+    options.cwd = '/github/home/rpmbuild/SRPMS/';
+
+    await exec.exec('ls', options);
+
+    core.setOutput("source_rpm_path", `/github/home/rpmbuild/SRPMS/${myOutput}`); // make option to upload source rpm
 
   } catch (error) {
     core.setFailed(error.message);
