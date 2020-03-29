@@ -32,7 +32,7 @@ async function run() {
       ref
     ).then( function(filePath){
       console.log(`Tar Path for copy : ${filePath}`);
-      io.cp(`${repo}-1.0.tar.gz`, '/github/home/rpmbuild/SOURCES/');
+      io.cp(`${repo}-1.0.tar.gz`, '/root/rpmbuild/SOURCES/');
     }).catch(function(error){
       console.log(error);
     });
@@ -41,6 +41,7 @@ async function run() {
 
     // Get repo files from /github/workspace/
     await exec.exec('ls -la ');
+    await io.cp(`${repo}-1.0.tar.gz`, '/root/rpmbuild/SOURCES/');
 
     // Copy tar.gz file to /root/rpmbuild/SOURCES
     // make sure the name of tar.gz is same as given in Source of spec file
@@ -49,7 +50,7 @@ async function run() {
     // Execute rpmbuild 
     try {
       await exec.exec(
-        `rpmbuild -ba /github/workspace/cello.spec`
+        `rpmbuild --define '_topdir /root/rpmbuild' -ba /github/workspace/cello.spec`
       );
     } catch (err) {
       core.setFailed(`action failed with error: ${err}`);
