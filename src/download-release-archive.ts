@@ -9,35 +9,26 @@ async function download_archive(owner, repo, ref ) {
         const octokit = new Octokit();
 
         const archive_format = "tarball";
-        const ref = "v1.0.0"
+
+        const tag = "v1.0.0"
+        
+        const tarFile = `${tag}.tar.gz`;
 
         console.log("Calling API ...");
-
-        octokit.repos.getBranch({
+        octokit.repos.getArchiveLink({
             owner,
             repo,
+            archive_format,
             ref
-          }).then(( { data }) => {
-              console.log(data);
-          });
+        }).then(( { data }) => {
+            fs.writeFileSync(tarFile, Buffer.from(data));
+        }).catch( function(error){
+            console.log(error);
+        });
 
+        console.log(`Tarball Location : ${tarFile}`);
 
-        // octokit.repos.getArchiveLink({
-        //     owner,
-        //     repo,
-        //     archive_format,
-        //     ref
-        // }).then(( { data }) => {
-        //     console.log(data)
-        // });
-
-        //console.log(`Download Location : ${downloadLocation}`);    
-        
-        //const tarBallPath = await tc.downloadTool(downloadLocation);
-
-        //console.log(`Tarball Location : ${tarBallPath}`);
-
-        //return tarBallPath;
+        return tarFile;
 
     } catch (error) {
         core.setFailed(error.message);

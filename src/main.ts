@@ -26,11 +26,10 @@ async function run() {
     // Get repo files from /github/workspace/
     await exec.exec('ls -la /github/workspace');
 
-    // LOG: know current directory
-    await exec.exec('pwd && echo $HOME && ls');
+
 
     // Copy spec file from path specFile to /root/rpmbuild/SPECS/
-    //await io.cp('path/to/file', 'path/to/dest');
+    await io.cp('/github/workspace/cello.spec', '/root/rpmbuild/SPECS/');
     
     // Get tar.gz file of release 
     // 1. Write API call to download tar.gz from release OR
@@ -38,7 +37,7 @@ async function run() {
 
     // Copy tar.gz file to /root/rpmbuild/SOURCES
     // make sure the name of tar.gz is same as given in Source of spec file
-    //await io.cp('path/to/file', '/root/rpmbuild/SOURCES');
+    await io.cp(tarBallPath, '/root/rpmbuild/SOURCES');
 
     // Execute rpmbuild 
     try {
