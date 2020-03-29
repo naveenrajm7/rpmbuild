@@ -14,6 +14,8 @@ async function run() {
     const repo = context.repo.repo
     const ref = context.ref
 
+    const version = "1.0.0"
+
     console.log(`We can even get context data, like the owner: ${owner}, repo: ${repo}, ref: ${ref}`);
 
     const specFile = core.getInput('specFile');
@@ -27,15 +29,15 @@ async function run() {
 
     await exec.exec(`curl -L --output tmp.tar.gz https://api.github.com/repos/${owner}/${repo}/tarball/${ref}`)
 
-    await exec.exec(`mkdir ${repo}`);
+    await exec.exec(`mkdir ${repo}-${version}`);
 
-    await exec.exec(`tar xvf tmp.tar.gz -C ${repo} --strip-components 1`);
+    await exec.exec(`tar xvf tmp.tar.gz -C ${repo}-${version} --strip-components 1`);
 
-    await exec.exec(`tar -czvf ${repo}.tar.gz ${repo}`);
+    await exec.exec(`tar -czvf ${repo}-${version}.tar.gz ${repo}-${version}`);
 
     // Get repo files from /github/workspace/
     await exec.exec('ls -la ');
-    await exec.exec(`cp ${repo}.tar.gz /github/home/rpmbuild/SOURCES/`);
+    await exec.exec(`cp ${repo}-${version}.tar.gz /github/home/rpmbuild/SOURCES/`);
 
     // Copy tar.gz file to /root/rpmbuild/SOURCES
     // make sure the name of tar.gz is same as given in Source of spec file
