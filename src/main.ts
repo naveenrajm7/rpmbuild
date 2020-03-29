@@ -31,6 +31,7 @@ async function run() {
       repo,
       ref
     ).then( function(filePath){
+      console.log(`Tar Path for copy : ${filePath}`);
       io.cp(filePath, '/root/rpmbuild/SOURCES');
     }).catch(function(error){
       console.log(error);
@@ -48,7 +49,7 @@ async function run() {
     // Execute rpmbuild 
     try {
       await exec.exec(
-        `rpmbuild -ba ${specFile}`
+        `rpmbuild -ba /github/workspace/cello.spec`
       );
     } catch (err) {
       core.setFailed(`action failed with error: ${err}`);
@@ -56,12 +57,13 @@ async function run() {
 
     // Get path for rpm 
     //const rpmPath = await exec.exec('node', ['index.js', 'foo=bar'], options);
+    await exec.exec('ls /root/rpmbuild/RPMS');
 
     // setOutput rpm_path to /root/rpmbuild/RPMS , to be consumed by other actions like 
     // actions/upload-release-asset 
     // If you want to upload yourself , need to write api call to upload as asset
     //core.setOutput("rpmPath", rpmPath)
-    //core.setOutput("sourceRpmPath", sourceRpmPath)  // make option to upload source rpm
+    core.setOutput("source_rpm_path", "/root/rpmbuild/SRPMS")  // make option to upload source rpm
 
   } catch (error) {
     core.setFailed(error.message);
