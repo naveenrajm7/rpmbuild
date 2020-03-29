@@ -16,12 +16,12 @@ async function run() {
 
     console.log(`We can even get context data, like the owner: ${owner}, repo: ${repo}, ref: ${ref}`);
 
-    const tarBallPath = download_tar(owner, repo, ref);
+    const tarBallPath = await download_tar(owner, repo, ref);
 
     console.log(`Tar Path for copy : ${tarBallPath}`);
 
     const specFile = core.getInput('specFile');
-    core.debug(`Hello ${specFile} from inside a container`);
+    console.log(`Hello ${specFile} from inside a container`);
 
     // Get repo files from /github/workspace/
     await exec.exec('ls -la /github/workspace');
