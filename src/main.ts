@@ -32,7 +32,7 @@ async function run() {
       ref
     ).then( function(filePath){
       console.log(`Tar Path for copy : ${filePath}`);
-      io.cp(`${repo}-1.0.tar.gz`, '/root/rpmbuild/SOURCES');
+      io.cp(`${repo}-1.0.tar.gz`, '/github/home/rpmbuild/SOURCES/');
     }).catch(function(error){
       console.log(error);
     });
