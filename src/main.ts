@@ -3,6 +3,7 @@ const github = require('@actions/github');
 const exec = require('@actions/exec');
 const io = require('@actions/io');
 const download_tar = require('./download-release-archive');
+const cp = require('child_process');
 
 async function run() {
   try {
@@ -60,21 +61,19 @@ async function run() {
     // actions/upload-release-asset 
     // If you want to upload yourself , need to write api call to upload as asset
     //core.setOutput("rpmPath", rpmPath)
+
     let myOutput = '';
-    let myError = '';
-
-    const options: any = { };
-    options.listeners = {
-      stdout: (data: Buffer) => {
-        myOutput += data.toString();
-      },
-      stderr: (data: Buffer) => {
-        myError += data.toString();
-      }
-    };
-    options.cwd = '/github/home/rpmbuild/SRPMS/';
-
-    await exec.exec('ls', [ '-C' ], options);
+    cp.exec('ls /github/home/rpmbuild/SRPMS/', (err, stdout, stderr) => {
+      if (err) {
+        //some err occurred
+        console.error(err)
+      } else {
+          // the *entire* stdout and stderr (buffered)
+          console.log(`stdout: ${stdout}`);
+          myOutput = stdout;
+          console.log(`stderr: ${stderr}`);
+        }
+      });
 
     core.setOutput("source_rpm_path", `/github/home/rpmbuild/SRPMS/${myOutput}`); // make option to upload source rpm
 
