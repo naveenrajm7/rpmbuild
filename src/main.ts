@@ -25,13 +25,13 @@ async function run() {
     // Copy spec file from path specFile to /root/rpmbuild/SPECS/
     await io.cp(`/github/workspace/${specFile}`, '/github/home/rpmbuild/SPECS/');
 
-    await exec.exec(`cp -R /github/workspace/ ${repo}`);
+    await exec.exec(`cp -R /github/workspace/ /github/home/${repo}`);
 
-    await exec.exec(`tar -czvf ${repo}.tar.gz ${repo}`);
+    await exec.exec(`cd /github/home && tar -czvf ${repo}.tar.gz ${repo}`);
 
     // Get repo files from /github/workspace/
     await exec.exec('ls -la ');
-    await exec.exec(`cp ${repo}.tar.gz /github/home/rpmbuild/SOURCES/`);
+    await exec.exec(`cp /github/home/${repo}.tar.gz /github/home/rpmbuild/SOURCES/`);
 
     // Copy tar.gz file to /root/rpmbuild/SOURCES
     // make sure the name of tar.gz is same as given in Source of spec file
