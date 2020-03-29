@@ -5,10 +5,10 @@ FROM centos:7
 COPY . .
 
 # Installing tools needed for rpmbuild
-RUN yum install -y gcc rpm-build rpm-devel rpmlint make rpmdevtools
+RUN yum install -y rpm-build rpmdevtools
 
 # LOG: check contents
-RUN pwd && ls -la 
+RUN pwd && ls -la && echo $HOME
 
 # Creting rpmbuild directory tree 
 RUN rpmdev-setuptree
