@@ -27,7 +27,7 @@ async function run() {
 
     await exec.exec(`cp -R /github/workspace/ /tmp/${repo}`);
 
-    await exec.exec(`cd /tmp/ && tar -czvf ${repo}.tar.gz ${repo}`);
+    await exec.exec(`tar -czvf ${repo}.tar.gz ${repo}`, { cwd : "/tmp"});
 
     // Get repo files from /github/workspace/
     await exec.exec('ls -la /tmp');
