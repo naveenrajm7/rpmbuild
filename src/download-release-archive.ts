@@ -12,7 +12,7 @@ async function download_archive(owner, repo, ref ) {
 
         const tag = "v1.0.0"
         
-        const tarFile = `${tag}.tar.gz`;
+        const tarFile = `${repo}-1.0.tar.gz`;
 
         console.log("Calling API ...");
         await octokit.repos.getArchiveLink({
