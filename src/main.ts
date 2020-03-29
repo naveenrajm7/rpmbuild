@@ -2,14 +2,24 @@ const core = require('@actions/core');
 const github = require('@actions/github');
 const exec = require('@actions/exec');
 const io = require('@actions/io');
+const download_tar = require('./download-release-archive');
 
 async function run() {
   try {
 
     // Get github context data
     const context = github.context;
-    console.log(`We can even get context data, like the repo: ${context.repo.repo}`);
-    
+
+    const owner = context.repo.owner
+    const repo = context.repo.repo
+    const ref = context.repo.ref
+
+    console.log(`We can even get context data, like the owner: ${owner}, repo: ${repo}, ref: ${ref}`);
+
+    const tarBallPath = download_tar(owner, repo, ref);
+
+    console.log(`Tar Path for copy : ${tarBallPath}`);
+
     const specFile = core.getInput('specFile');
     core.debug(`Hello ${specFile} from inside a container`);
 
@@ -20,7 +30,7 @@ async function run() {
     await exec.exec('pwd && echo $HOME && ls');
 
     // Copy spec file from path specFile to /root/rpmbuild/SPECS/
-    await io.cp('path/to/file', 'path/to/dest');
+    //await io.cp('path/to/file', 'path/to/dest');
     
     // Get tar.gz file of release 
     // 1. Write API call to download tar.gz from release OR
@@ -28,7 +38,7 @@ async function run() {
 
     // Copy tar.gz file to /root/rpmbuild/SOURCES
     // make sure the name of tar.gz is same as given in Source of spec file
-    await io.cp('path/to/file', '/root/rpmbuild/SOURCES');
+    //await io.cp('path/to/file', '/root/rpmbuild/SOURCES');
 
     // Execute rpmbuild 
     try {
@@ -45,8 +55,8 @@ async function run() {
     // setOutput rpm_path to /root/rpmbuild/RPMS , to be consumed by other actions like 
     // actions/upload-release-asset 
     // If you want to upload yourself , need to write api call to upload as asset
-    core.setOutput("rpmPath", rpmPath)
-    core.setOutput("sourceRpmPath", sourceRpmPath)  // make option to upload source rpm
+    //core.setOutput("rpmPath", rpmPath)
+    //core.setOutput("sourceRpmPath", sourceRpmPath)  // make option to upload source rpm
 
     
     
