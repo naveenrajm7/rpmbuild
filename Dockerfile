@@ -4,8 +4,8 @@ FROM centos:7
 # Copying all contents of rpmbuild repo inside container
 COPY . .
 
-# Installing tools needed for rpmbuild
-RUN yum install -y rpm-build rpmdevtools
+# Installing tools needed for rpmbuild , depends on specfile
+RUN yum install -y rpm-build rpmdevtools gcc make coreutils
 
 # Setting up node to run our JS file
 # Download Node Linux binary
