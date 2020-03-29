@@ -38,7 +38,7 @@ async function run() {
     });
 
     //console.log(`Tar Path for copy : ${tarBallPath}`);
-    await exec.exec('echo $HOME');
+    await exec.exec('echo "$HOME"');
 
     // Get repo files from /github/workspace/
     await exec.exec('ls -la ');
