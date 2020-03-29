@@ -9,15 +9,27 @@ async function download_archive(owner, repo, ref ) {
         const octokit = new Octokit();
 
         const archive_format = "tarball";
+        const ref = "v1.0.0"
 
-        octokit.repos.getArchiveLink({
+        console.log("Calling API ...");
+
+        octokit.repos.getBranch({
             owner,
             repo,
-            archive_format,
             ref
-        }).then(( { data }) => {
-            console.log(data)
-        });
+          }).then(( { data }) => {
+              console.log(data);
+          });
+
+
+        // octokit.repos.getArchiveLink({
+        //     owner,
+        //     repo,
+        //     archive_format,
+        //     ref
+        // }).then(( { data }) => {
+        //     console.log(data)
+        // });
 
         //console.log(`Download Location : ${downloadLocation}`);    
         
