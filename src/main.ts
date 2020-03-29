@@ -53,7 +53,7 @@ async function run() {
     // Execute rpmbuild 
     try {
       await exec.exec(
-        `rpmbuild --define -ba /github/home/rpmbuild/SPECS/cello.spec`
+        `rpmbuild -ba /github/home/rpmbuild/SPECS/cello.spec`
       );
     } catch (err) {
       core.setFailed(`action failed with error: ${err}`);
