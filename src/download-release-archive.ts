@@ -15,13 +15,13 @@ async function download_archive(owner, repo, ref ) {
         const tarFile = `${tag}.tar.gz`;
 
         console.log("Calling API ...");
-        octokit.repos.getArchiveLink({
+        await octokit.repos.getArchiveLink({
             owner,
             repo,
             archive_format,
             ref
         }).then(( { data }) => {
-            fs.writeFile(tarFile, Buffer.from(data), function(err){
+                fs.writeFile(tarFile, Buffer.from(data), function(err){
                 if(err) {
                     return console.log(err);
                 }
