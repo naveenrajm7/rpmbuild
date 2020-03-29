@@ -70,7 +70,7 @@ async function run() {
       } else {
           // the *entire* stdout and stderr (buffered)
           console.log(`stdout: ${stdout}`);
-          myOutput = stdout;
+          myOutput = `${stdout}`;
           console.log(`stderr: ${stderr}`);
         }
       });
