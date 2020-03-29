@@ -19,11 +19,13 @@ async function run() {
     const specFile = core.getInput('specFile');
     console.log(`Hello ${specFile} from inside a container`);
 
+    await exec.exec('rpmdev-setuptree');
+
     // Get repo files from /github/workspace/
     await exec.exec('ls -la ');
 
     // Copy spec file from path specFile to /root/rpmbuild/SPECS/
-    await io.cp('/github/workspace/cello.spec', '/root/rpmbuild/SPECS/');
+    await io.cp('/github/workspace/cello.spec', '/github/home/rpmbuild/SPECS/');
 
     // Get tar.gz file of release 
     await download_tar(
@@ -32,7 +34,7 @@ async function run() {
       ref
     ).then( function(filePath){
       console.log(`Tar Path for copy : ${filePath}`);
-      io.cp(`${repo}-1.0.tar.gz`, '/root/rpmbuild/SOURCES/');
+      io.cp(`${repo}-1.0.tar.gz`, '/github/home/rpmbuild/SOURCES/');
     }).catch(function(error){
       console.log(error);
     });
@@ -42,7 +44,7 @@ async function run() {
 
     // Get repo files from /github/workspace/
     await exec.exec('ls -la ');
-    await io.cp(`${repo}-1.0.tar.gz`, '/root/rpmbuild/SOURCES/');
+    await io.cp(`${repo}-1.0.tar.gz`, '/github/home/rpmbuild/SOURCES/');
 
     // Copy tar.gz file to /root/rpmbuild/SOURCES
     // make sure the name of tar.gz is same as given in Source of spec file
@@ -51,7 +53,7 @@ async function run() {
     // Execute rpmbuild 
     try {
       await exec.exec(
-        `rpmbuild --define '_topdir /root/rpmbuild' -ba /github/workspace/cello.spec`
+        `rpmbuild --define -ba /github/home/rpmbuild/SPECS/cello.spec`
       );
     } catch (err) {
       core.setFailed(`action failed with error: ${err}`);
@@ -59,13 +61,13 @@ async function run() {
 
     // Get path for rpm 
     //const rpmPath = await exec.exec('node', ['index.js', 'foo=bar'], options);
-    await exec.exec('ls /root/rpmbuild/RPMS');
+    await exec.exec('ls /github/home/rpmbuild/RPMS');
 
     // setOutput rpm_path to /root/rpmbuild/RPMS , to be consumed by other actions like 
     // actions/upload-release-asset 
     // If you want to upload yourself , need to write api call to upload as asset
     //core.setOutput("rpmPath", rpmPath)
-    core.setOutput("source_rpm_path", "/root/rpmbuild/SRPMS")  // make option to upload source rpm
+    core.setOutput("source_rpm_path", "/github/home/rpmbuild/SRPMS")  // make option to upload source rpm
 
   } catch (error) {
     core.setFailed(error.message);
