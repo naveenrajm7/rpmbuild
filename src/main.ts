@@ -16,25 +16,22 @@ async function run() {
 
     console.log(`We can even get context data, like the owner: ${owner}, repo: ${repo}, ref: ${ref}`);
 
-    const tarBallPath = await download_tar(owner, repo, ref);
-
-    console.log(`Tar Path for copy : ${tarBallPath}`);
-
     const specFile = core.getInput('specFile');
     console.log(`Hello ${specFile} from inside a container`);
-
-    // Get repo files from /github/workspace/
-    await exec.exec('ls -la /github/workspace');
 
     // Get repo files from /github/workspace/
     await exec.exec('ls -la ');
 
     // Copy spec file from path specFile to /root/rpmbuild/SPECS/
     await io.cp('/github/workspace/cello.spec', '/root/rpmbuild/SPECS/');
-    
+
     // Get tar.gz file of release 
-    // 1. Write API call to download tar.gz from release OR
-    // 2. Create tar.gz of /github/workspace to get tar of source code
+    const tarBallPath = await download_tar(owner, repo, ref);
+
+    console.log(`Tar Path for copy : ${tarBallPath}`);
+
+    // Get repo files from /github/workspace/
+    await exec.exec('ls -la ');
 
     // Copy tar.gz file to /root/rpmbuild/SOURCES
     // make sure the name of tar.gz is same as given in Source of spec file
@@ -58,8 +55,6 @@ async function run() {
     //core.setOutput("rpmPath", rpmPath)
     //core.setOutput("sourceRpmPath", sourceRpmPath)  // make option to upload source rpm
 
-    
-    
   } catch (error) {
     core.setFailed(error.message);
   }
