@@ -26,16 +26,24 @@ async function run() {
     await io.cp('/github/workspace/cello.spec', '/root/rpmbuild/SPECS/');
 
     // Get tar.gz file of release 
-    const tarBallPath = await download_tar(owner, repo, ref);
+    await download_tar(
+      owner,
+      repo,
+      ref
+    ).then( function(filePath){
+      io.cp(filePath, '/root/rpmbuild/SOURCES');
+    }).catch(function(error){
+      console.log(error);
+    });
 
-    console.log(`Tar Path for copy : ${tarBallPath}`);
+    //console.log(`Tar Path for copy : ${tarBallPath}`);
 
     // Get repo files from /github/workspace/
     await exec.exec('ls -la ');
 
     // Copy tar.gz file to /root/rpmbuild/SOURCES
     // make sure the name of tar.gz is same as given in Source of spec file
-    await io.cp(tarBallPath, '/root/rpmbuild/SOURCES');
+    //await io.cp(tarBallPath, '/root/rpmbuild/SOURCES');
 
     // Execute rpmbuild 
     try {
