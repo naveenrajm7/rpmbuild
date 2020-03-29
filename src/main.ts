@@ -26,7 +26,8 @@ async function run() {
     // Get repo files from /github/workspace/
     await exec.exec('ls -la /github/workspace');
 
-
+    // Get repo files from /github/workspace/
+    await exec.exec('ls -la ');
 
     // Copy spec file from path specFile to /root/rpmbuild/SPECS/
     await io.cp('/github/workspace/cello.spec', '/root/rpmbuild/SPECS/');

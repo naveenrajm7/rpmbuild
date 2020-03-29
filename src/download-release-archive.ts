@@ -21,7 +21,12 @@ async function download_archive(owner, repo, ref ) {
             archive_format,
             ref
         }).then(( { data }) => {
-            fs.writeFileSync(tarFile, Buffer.from(data));
+            fs.writeFile(tarFile, Buffer.from(data), function(err){
+                if(err) {
+                    return console.log(err);
+                }
+                console.log("The Tar file was saved!");
+            });
         }).catch( function(error){
             console.log(error);
         });
