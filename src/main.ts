@@ -70,12 +70,22 @@ async function run() {
       } else {
           // the *entire* stdout and stderr (buffered)
           console.log(`stdout: ${stdout}`);
-          myOutput = `${stdout}`;
+          myOutput = myOutput+`${stdout}`;
           console.log(`stderr: ${stderr}`);
         }
       });
 
-    core.setOutput("source_rpm_path", `/github/home/rpmbuild/SRPMS/${myOutput}`); // make option to upload source rpm
+
+    // only contents of workspace can be changed by actions and used by subsequent actions 
+    // So copy all generated rpms into workspace , and publish output path relative to workspace
+    await exec.exec(`mkdir -p rpmbuild/SRPMS`)
+
+    await exec.exec(`cp /github/home/rpmbuild/SRPMS/${myOutput} rpmbuild/SRPMS`)
+
+    await exec.exec(`ls -la rpmbuild/SRPMS`)
+
+    // set output to path relative to workspace ex ./rpm/
+    core.setOutput("source_rpm_path", `rpmbuild/SRPMS`); // make option to upload source rpm
 
   } catch (error) {
     core.setFailed(error.message);
