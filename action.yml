@@ -3,10 +3,10 @@ description: 'Build RPM from spec file and source code'
 author: 'Naveenraj M'
 
 inputs: 
-  specFile:
+  spec_file:
     description: 'path to the spec file'
     required: true
-    default: '.'
+    default: '*.spec'
     
 runs:
   using: 'docker'
