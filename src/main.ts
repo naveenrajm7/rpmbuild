@@ -70,12 +70,11 @@ async function run() {
       } else {
           // the *entire* stdout and stderr (buffered)
           console.log(`stdout: ${stdout}`);
-          myOutput = myOutput+`${stdout}`;
+          myOutput = myOutput+`${stdout}`.trim();
           console.log(`stderr: ${stderr}`);
         }
       });
 
-    myOutput = myOutput.trim();
 
     // only contents of workspace can be changed by actions and used by subsequent actions 
     // So copy all generated rpms into workspace , and publish output path relative to workspace
