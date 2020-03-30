@@ -1,4 +1,4 @@
-name: 'rpmbuild'
+name: 'RPM Build'
 description: 'Build RPMs from spec file and upload it as Artifact or Release Asset'
 author: 'Naveenraj M'
 
