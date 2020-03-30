@@ -20,7 +20,7 @@ async function run() {
     const specFile = core.getInput('spec_file');
 
     // Read spec file and get values 
-    var data = fs.readFileSync('cello/cello.spec', 'utf8');
+    var data = fs.readFileSync(specFile, 'utf8');
     let name = '';       
     let version = '';
 
