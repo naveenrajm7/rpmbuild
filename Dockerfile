@@ -5,7 +5,7 @@ FROM centos:7
 COPY . .
 
 # Installing tools needed for rpmbuild , depends on specfile
-RUN yum install -y rpm-build rpmdevtools gcc make coreutils
+RUN yum install -y rpm-build rpmdevtools gcc make coreutils python
 
 # Setting up node to run our JS file
 # Download Node Linux binary
