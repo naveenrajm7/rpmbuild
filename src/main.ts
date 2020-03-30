@@ -17,32 +17,31 @@ async function run() {
 
     const version = "1.0.0"
 
-    console.log(`We can even get context data, like the owner: ${owner}, repo: ${repo}, ref: ${ref}`);
-
-    const specFile = core.getInput('specFile');
-    console.log(`Hello ${specFile} from inside a container`);
+    // get inputs from workflow
+    const specFile = core.getInput('spec_file');
 
     // setup rpm tree
     await exec.exec('rpmdev-setuptree');
 
     // Copy spec file from path specFile to /root/rpmbuild/SPECS/
-    await io.cp(`/github/workspace/${specFile}`, '/github/home/rpmbuild/SPECS/');
+    await exec.exec(`cp /github/workspace/${specFile} /github/home/rpmbuild/SPECS/`);
 
+    // Dowload tar.gz file of source code
     await exec.exec(`curl -L --output tmp.tar.gz https://api.github.com/repos/${owner}/${repo}/tarball/${ref}`)
 
+    // create directory to match source file - repo-version
     await exec.exec(`mkdir ${repo}-${version}`);
 
+    // Extract source code to directory
     await exec.exec(`tar xvf tmp.tar.gz -C ${repo}-${version} --strip-components 1`);
 
+    // Create Source tar.gz file
     await exec.exec(`tar -czvf ${repo}-${version}.tar.gz ${repo}-${version}`);
 
     // Get repo files from /github/workspace/
     await exec.exec('ls -la ');
+    // Copy tar.gz file to source
     await exec.exec(`cp ${repo}-${version}.tar.gz /github/home/rpmbuild/SOURCES/`);
-
-    // Copy tar.gz file to /root/rpmbuild/SOURCES
-    // make sure the name of tar.gz is same as given in Source of spec file
-    //await io.cp(tarBallPath, '/root/rpmbuild/SOURCES');
 
     // Execute rpmbuild 
     try {
@@ -53,14 +52,11 @@ async function run() {
       core.setFailed(`action failed with error: ${err}`);
     }
 
-    // Get path for rpm 
-    //const rpmPath = await exec.exec('node', ['index.js', 'foo=bar'], options);
+    // Verify RPM created
     await exec.exec('ls /github/home/rpmbuild/RPMS');
 
     // setOutput rpm_path to /root/rpmbuild/RPMS , to be consumed by other actions like 
     // actions/upload-release-asset 
-    // If you want to upload yourself , need to write api call to upload as asset
-    //core.setOutput("rpmPath", rpmPath)
 
     let myOutput = '';
     await cp.exec('ls /github/home/rpmbuild/SRPMS/', (err, stdout, stderr) => {
