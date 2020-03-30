@@ -21,7 +21,6 @@ async function run() {
 
     // Read spec file and get values 
     var data = fs.readFileSync('cello/cello.spec', 'utf8');
-
     let name = '';       
     let version = '';
 
@@ -34,7 +33,6 @@ async function run() {
             version = version+lineArray[1];
         }   
     }
-
     console.log(`name: ${name}`);
     console.log(`version: ${version}`);
 
@@ -99,7 +97,13 @@ async function run() {
     await exec.exec(`ls -la rpmbuild/SRPMS`)
 
     // set output to path relative to workspace ex ./rpm/
-    core.setOutput("source_rpm_path", `rpmbuild/SRPMS`); // make option to upload source rpm
+    core.setOutput("source_rpm_dir_path", `rpmbuild/SRPMS/${myOutput}`);        // path to Source RPM directory
+    core.setOutput("source_rpm_path", `rpmbuild/SRPMS/${myOutput}`);            // path to Source RPM file
+    core.setOutput("source_rpm_name", `${myOutput}`);                           // name of Source RPM file
+
+    core.setOutput("rpm_content_type", "application/octet-stream");             // Content-type for Upload
+    
+
 
   } catch (error) {
     core.setFailed(error.message);
