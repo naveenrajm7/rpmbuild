@@ -2,8 +2,8 @@ const core = require('@actions/core');
 const github = require('@actions/github');
 const exec = require('@actions/exec');
 const io = require('@actions/io');
-const download_tar = require('./download-release-archive');
 const cp = require('child_process');
+const fs = require('fs');
 
 async function run() {
   try {
@@ -15,10 +15,28 @@ async function run() {
     const repo = context.repo.repo
     const ref = context.ref
 
-    const version = "1.0.0"
-
     // get inputs from workflow
+    // specFile name
     const specFile = core.getInput('spec_file');
+
+    // Read spec file and get values 
+    var data = fs.readFileSync('cello/cello.spec', 'utf8');
+
+    let name = '';       
+    let version = '';
+
+    for (var line of data.split('\n')){
+        var lineArray = line.split(/[ ]+/);
+        if(lineArray[0].includes('Name')){
+            name = name+lineArray[1];
+        }
+        if(lineArray[0].includes('Version')){
+            version = version+lineArray[1];
+        }   
+    }
+
+    console.log(`name: ${name}`);
+    console.log(`version: ${version}`);
 
     // setup rpm tree
     await exec.exec('rpmdev-setuptree');
@@ -29,19 +47,19 @@ async function run() {
     // Dowload tar.gz file of source code
     await exec.exec(`curl -L --output tmp.tar.gz https://api.github.com/repos/${owner}/${repo}/tarball/${ref}`)
 
-    // create directory to match source file - repo-version
-    await exec.exec(`mkdir ${repo}-${version}`);
+    // create directory to match source file - name-version
+    await exec.exec(`mkdir ${name}-${version}`);
 
     // Extract source code to directory
-    await exec.exec(`tar xvf tmp.tar.gz -C ${repo}-${version} --strip-components 1`);
+    await exec.exec(`tar xvf tmp.tar.gz -C ${name}-${version} --strip-components 1`);
 
     // Create Source tar.gz file
-    await exec.exec(`tar -czvf ${repo}-${version}.tar.gz ${repo}-${version}`);
+    await exec.exec(`tar -czvf ${name}-${version}.tar.gz ${name}-${version}`);
 
     // Get repo files from /github/workspace/
     await exec.exec('ls -la ');
     // Copy tar.gz file to source
-    await exec.exec(`cp ${repo}-${version}.tar.gz /github/home/rpmbuild/SOURCES/`);
+    await exec.exec(`cp ${name}-${version}.tar.gz /github/home/rpmbuild/SOURCES/`);
 
     // Execute rpmbuild 
     try {
