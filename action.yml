@@ -1,13 +1,29 @@
 name: 'rpmbuild'
-description: 'Build RPM from spec file and source code'
+description: 'Build RPMs from spec file and upload it as Artifact or Release Asset'
 author: 'Naveenraj M'
 
 inputs: 
   spec_file:
     description: 'path to the spec file'
     required: true
-    default: '*.spec'
-    
+    default: '*.spec'                     #Any spec file in top 
+
+outputs:
+  source_rpm_path:
+    description: 'path to Source RPM file'
+  source_rpm_dir_path:
+    description: 'path to Source RPM directory'
+  source_rpm_name:
+    description: 'name of Source RPM file'
+  rpm_content_type:
+    description: 'Content-type for Upload'
+
 runs:
   using: 'docker'
   image: 'Dockerfile'
+
+branding:
+  icon: 'package'
+  color: 'red'
+
+  
