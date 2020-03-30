@@ -63,7 +63,7 @@ async function run() {
     //core.setOutput("rpmPath", rpmPath)
 
     let myOutput = '';
-    cp.exec('ls /github/home/rpmbuild/SRPMS/', (err, stdout, stderr) => {
+    await cp.exec('ls /github/home/rpmbuild/SRPMS/', (err, stdout, stderr) => {
       if (err) {
         //some err occurred
         console.error(err)
@@ -75,6 +75,7 @@ async function run() {
         }
       });
 
+    myOutput = myOutput.trim();
 
     // only contents of workspace can be changed by actions and used by subsequent actions 
     // So copy all generated rpms into workspace , and publish output path relative to workspace
