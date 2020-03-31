@@ -12,9 +12,11 @@ outputs:
   source_rpm_path:
     description: 'path to Source RPM file'
   source_rpm_dir_path:
-    description: 'path to Source RPM directory'
+    description: 'path to  SRPMS directory'
   source_rpm_name:
     description: 'name of Source RPM file'
+  rpm_dir_path:
+    description: 'path to RPMS directory'
   rpm_content_type:
     description: 'Content-type for Upload'
 
