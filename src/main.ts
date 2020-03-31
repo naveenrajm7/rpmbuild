@@ -11,6 +11,7 @@ async function run() {
     // Get github context data
     const context = github.context;
 
+    // To be used to get contents of this git ref 
     const owner = context.repo.owner
     const repo = context.repo.repo
     const ref = context.ref
@@ -42,24 +43,25 @@ async function run() {
     // Copy spec file from path specFile to /root/rpmbuild/SPECS/
     await exec.exec(`cp /github/workspace/${specFile} /github/home/rpmbuild/SPECS/`);
 
-    // Dowload tar.gz file of source code
+    // Dowload tar.gz file of source code,  Reference : https://developer.github.com/v3/repos/contents/#get-archive-link
     await exec.exec(`curl -L --output tmp.tar.gz https://api.github.com/repos/${owner}/${repo}/tarball/${ref}`)
 
-    // create directory to match source file - name-version
+    // create directory to match source file - %{name}-{version}.tar.gz of spec file
     await exec.exec(`mkdir ${name}-${version}`);
 
-    // Extract source code to directory
+    // Extract source code 
     await exec.exec(`tar xvf tmp.tar.gz -C ${name}-${version} --strip-components 1`);
 
-    // Create Source tar.gz file
+    // Create Source tar.gz file 
     await exec.exec(`tar -czvf ${name}-${version}.tar.gz ${name}-${version}`);
 
-    // Get repo files from /github/workspace/
-    await exec.exec('ls -la ');
-    // Copy tar.gz file to source
+    // // list files in current directory /github/workspace/
+    // await exec.exec('ls -la ');
+
+    // Copy tar.gz file to source path
     await exec.exec(`cp ${name}-${version}.tar.gz /github/home/rpmbuild/SOURCES/`);
 
-    // Execute rpmbuild 
+    // Execute rpmbuild , -ba generates both RPMS and SPRMS
     try {
       await exec.exec(
         `rpmbuild -ba /github/home/rpmbuild/SPECS/${specFile}`
@@ -68,12 +70,13 @@ async function run() {
       core.setFailed(`action failed with error: ${err}`);
     }
 
-    // Verify RPM created
+    // Verify RPM is created
     await exec.exec('ls /github/home/rpmbuild/RPMS');
 
     // setOutput rpm_path to /root/rpmbuild/RPMS , to be consumed by other actions like 
     // actions/upload-release-asset 
 
+    // Get source rpm name , to provide file name, path as output
     let myOutput = '';
     await cp.exec('ls /github/home/rpmbuild/SRPMS/', (err, stdout, stderr) => {
       if (err) {
@@ -89,7 +92,7 @@ async function run() {
 
 
     // only contents of workspace can be changed by actions and used by subsequent actions 
-    // So copy all generated rpms into workspace , and publish output path relative to workspace
+    // So copy all generated rpms into workspace , and publish output path relative to workspace (/github/workspace)
     await exec.exec(`mkdir -p rpmbuild/SRPMS`);
     await exec.exec(`mkdir -p rpmbuild/RPMS`);
 
@@ -99,14 +102,12 @@ async function run() {
     await exec.exec(`ls -la rpmbuild/SRPMS`);
     await exec.exec(`ls -la rpmbuild/RPMS`);
     
-    // set output to path relative to workspace ex ./rpm/
+    // set outputs to path relative to workspace ex ./rpmbuild/
     core.setOutput("source_rpm_dir_path", `rpmbuild/SRPMS/`);              // path to  SRPMS directory
     core.setOutput("source_rpm_path", `rpmbuild/SRPMS/${myOutput}`);       // path to Source RPM file
     core.setOutput("source_rpm_name", `${myOutput}`);                      // name of Source RPM file
-
     core.setOutput("rpm_dir_path", `rpmbuild/RPMS/`);                      // path to RPMS directory
-
-    core.setOutput("rpm_content_type", "application/octet-stream");             // Content-type for Upload
+    core.setOutput("rpm_content_type", "application/octet-stream");        // Content-type for Upload
     
 
 
