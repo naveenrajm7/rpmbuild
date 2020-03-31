@@ -59,8 +59,8 @@ The generated RPMs or SRPMS can be uploaded as artifacts by using actions/upload
 
 #### Above workflow will create an artifact like :
 
-[artifact_image](!assests/upload_artifacts.png)
-<img src="assests/upload_artifacts.png" alt>
+![artifact_image](assests/upload_artifacts.png)
+
 
 Use with Release:
 ```yaml
@@ -117,8 +117,7 @@ jobs:
 
 #### The above release uploads SRPM like :
 
-[artifact_image](!assests/upload_release_asset.png)
-<img src="assests/upload_release_asset.png" alt>
+![artifact_image](assests/upload_release_asset.png)
 
 Example Repository which uses rpmbuild action https://github.com/naveenrajm7/cello
 
