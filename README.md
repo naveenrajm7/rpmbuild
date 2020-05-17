@@ -135,6 +135,9 @@ If your RPMs are distribution specific like el7 or el8.
         spec_file: "cello.spec"
 ```
 
+## Contribute
+
+Feel free to contribute to this project. Read [CONTRIBUTING Guide](CONTRIBUTING.md) for details.
 ## References
 
 * [RPM Packaging Guide](https://rpm-packaging-guide.github.io/)
@@ -145,4 +148,5 @@ If your RPMs are distribution specific like el7 or el8.
 
 The scripts and documentation in this project are released under the [GNU GPLv3](LICENSE)
 
-*Created during the GitHub Actions Hackathon 2020 :octocat: :computer: .*
+*Created during the GitHub Actions Hackathon 2020 :octocat: :computer: .*  
+*Made it to the [winner's list](https://docs.google.com/spreadsheets/d/1YL6mjJXGt3-75GejQCubsOvWwtYcGaqbJA7msnsh7Tg/edit?usp=sharing) (See Row no. 291!) :trophy: :medal_sports:*
