@@ -14,6 +14,8 @@ Create a workflow `.yml` file in your repositories `.github/workflows` directory
 ### Inputs
 
 - `spec_file`: The path to the spec file in your repo. [**required**]
+- `use_sources_from_repo`: This controls whether the action tries to download the current repo as the RPM source.
+  It can be useful to turn this off when a source parameter is set to download a source archive in your spec file.
 
 ### Outputs
 
@@ -47,6 +49,7 @@ jobs:
       uses: naveenrajm7/rpmbuild@master
       with:
         spec_file: "cello.spec"
+        use_sources_from_repo: true
 
     - name: Upload artifact
       uses: actions/upload-artifact@v1.0.0
@@ -54,6 +57,7 @@ jobs:
         name: Binary RPM
         path: ${{ steps.rpm.outputs.rpm_dir_path }}
 ```
+
 This workflow triggered on every `push` , builds RPM and Source RPM using cello.spec and contents of that git ref that triggered that action. Contents are retrived through [GitHub API](https://developer.github.com/v3/repos/contents/#get-archive-link) [downloaded through archive link].  
 The generated RPMs or SRPMS can be uploaded as artifacts by using actions/upload-artifact. The [outputs](#outputs) given by rpmbuild action can be used to specify path for upload action.
 
