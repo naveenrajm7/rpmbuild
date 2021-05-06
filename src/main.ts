@@ -19,6 +19,7 @@ async function run() {
     // get inputs from workflow
     // specFile name
     const specFile = core.getInput('spec_file');
+    const useSourcesFromRepo = core.getInput('use_sources_from_repo');
 
     // Read spec file and get values 
     var data = fs.readFileSync(specFile, 'utf8');
@@ -43,23 +44,25 @@ async function run() {
     // Copy spec file from path specFile to /root/rpmbuild/SPECS/
     await exec.exec(`cp /github/workspace/${specFile} /github/home/rpmbuild/SPECS/`);
 
-    // Dowload tar.gz file of source code,  Reference : https://developer.github.com/v3/repos/contents/#get-archive-link
-    await exec.exec(`curl -L --output tmp.tar.gz https://api.github.com/repos/${owner}/${repo}/tarball/${ref}`)
+    if (useSourcesFromRepo) {
+      // Dowload tar.gz file of source code,  Reference : https://developer.github.com/v3/repos/contents/#get-archive-link
+      await exec.exec(`curl -L --output tmp.tar.gz https://api.github.com/repos/${owner}/${repo}/tarball/${ref}`)
 
-    // create directory to match source file - %{name}-{version}.tar.gz of spec file
-    await exec.exec(`mkdir ${name}-${version}`);
+      // create directory to match source file - %{name}-{version}.tar.gz of spec file
+      await exec.exec(`mkdir ${name}-${version}`);
 
-    // Extract source code 
-    await exec.exec(`tar xvf tmp.tar.gz -C ${name}-${version} --strip-components 1`);
+      // Extract source code 
+      await exec.exec(`tar xvf tmp.tar.gz -C ${name}-${version} --strip-components 1`);
 
-    // Create Source tar.gz file 
-    await exec.exec(`tar -czvf ${name}-${version}.tar.gz ${name}-${version}`);
+      // Create Source tar.gz file 
+      await exec.exec(`tar -czvf ${name}-${version}.tar.gz ${name}-${version}`);
 
-    // // list files in current directory /github/workspace/
-    // await exec.exec('ls -la ');
+      // // list files in current directory /github/workspace/
+      // await exec.exec('ls -la ');
 
-    // Copy tar.gz file to source path
-    await exec.exec(`cp ${name}-${version}.tar.gz /github/home/rpmbuild/SOURCES/`);
+      // Copy tar.gz file to source path
+      await exec.exec(`cp ${name}-${version}.tar.gz /github/home/rpmbuild/SOURCES/`);
+    }
 
     // Execute rpmbuild , -ba generates both RPMS and SPRMS
     try {

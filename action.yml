@@ -8,6 +8,11 @@ inputs:
     required: true
     default: '*.spec'                     #Any spec file in top 
 
+  use_sources_from_repo:
+    description: 'whether to use the sources in the current github repository to build the RPM from'
+    required: false
+    default: true
+
 outputs:
   source_rpm_path:
     description: 'path to Source RPM file'
