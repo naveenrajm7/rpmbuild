@@ -40,7 +40,7 @@ async function run() {
     // setup rpm tree
     await exec.exec('rpmdev-setuptree');
 
-    // Copy spec file from path specFile to /root/rpmbuild/SPECS/
+    // Copy spec file from path specFile to /github/home/rpmbuild/SPECS/
     await exec.exec(`cp /github/workspace/${specFile} /github/home/rpmbuild/SPECS/`);
 
     // Make the code in /github/workspace/ into a tar.gz, located in /github/home/rpmbuild/SOURCES/
