@@ -56,6 +56,9 @@ async function run() {
     await exec.exec(`ln -s /github/home/rpmbuild/SOURCES/${name}-${version}.tar.gz /github/home/rpmbuild/SOURCES/${name}.tar.gz`);
     process.env.GIT_DIR = oldGitDir;
 
+	// Installs build dependencies
+    await exec.exec(`yum-builddep ${specFile.destFullPath}`);
+
     // Execute rpmbuild , -ba generates both RPMS and SPRMS
     try {
       await exec.exec(
