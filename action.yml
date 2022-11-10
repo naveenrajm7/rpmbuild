@@ -7,6 +7,9 @@ inputs:
     description: 'path to the spec file'
     required: true
     default: '*.spec'                     #Any spec file in top 
+  additional_repos:
+    description: 'A list of additional repositories to enable'
+    required: false
 
 outputs:
   source_rpm_path:
