@@ -67,7 +67,7 @@ async function run() {
 	}
 
 	// Installs build dependencies
-    await exec.exec(`yum-builddep ${specFile.destFullPath}`);
+    await exec.exec(`yum-builddep -y ${specFile.destFullPath}`);
 
     // Execute rpmbuild , -ba generates both RPMS and SPRMS
     try {
