@@ -56,8 +56,18 @@ async function run() {
     await exec.exec(`ln -s /github/home/rpmbuild/SOURCES/${name}-${version}.tar.gz /github/home/rpmbuild/SOURCES/${name}.tar.gz`);
     process.env.GIT_DIR = oldGitDir;
 
+    // Installs additional repositories
+    const additionalRepos = core.getInput('additional_repos'); // user input, eg: '["centos-release-scl"]'
+	if (additionalRepos) {
+		const arr = JSON.parse(additionalRepos);
+		for (let i = 0; i < arr.length; i++) {
+			console.log(`Installing repo': ${arr[i]}`);
+    		await exec.exec(`yum install -y ${arr[i]}`);
+		};
+	}
+
 	// Installs build dependencies
-    await exec.exec(`yum-builddep ${specFile.destFullPath}`);
+    await exec.exec(`yum-builddep -y ${specFile.destFullPath}`);
 
     // Execute rpmbuild , -ba generates both RPMS and SPRMS
     try {

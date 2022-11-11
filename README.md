@@ -14,6 +14,7 @@ Create a workflow `.yml` file in your repositories `.github/workflows` directory
 ### Inputs
 
 - `spec_file`: The path to the spec file in your repo. [**required**]
+- `additional_repos`: A list of additional repositories (in JSON-array format) that you want enabled to build your rpm. [**optional**]
 
 ### Outputs
 
@@ -47,6 +48,7 @@ jobs:
       uses: naveenrajm7/rpmbuild@master
       with:
         spec_file: "cello.spec"
+		additional_repos: "['centos-release-scl', 'http://www.percona.com/downloads/percona-release/redhat/0.1-3/percona-release-0.1-3.noarch.rpm']"
 
     - name: Upload artifact
       uses: actions/upload-artifact@v1.0.0
