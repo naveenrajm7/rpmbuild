@@ -48,7 +48,7 @@ jobs:
       uses: naveenrajm7/rpmbuild@master
       with:
         spec_file: "cello.spec"
-	additional_repos: "['centos-release-scl', 'http://www.percona.com/downloads/percona-release/redhat/0.1-3/percona-release-0.1-3.noarch.rpm']"
+        additional_repos: "['centos-release-scl', 'http://www.percona.com/downloads/percona-release/redhat/0.1-3/percona-release-0.1-3.noarch.rpm']"
 
     - name: Upload artifact
       uses: actions/upload-artifact@v1.0.0
