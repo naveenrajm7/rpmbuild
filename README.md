@@ -138,6 +138,7 @@ If your RPMs are distribution specific like el7 or el8.
 ## Contribute
 
 Feel free to contribute to this project. Read [CONTRIBUTING Guide](CONTRIBUTING.md) for more details.
+
 ## References
 
 * [RPM Packaging Guide](https://rpm-packaging-guide.github.io/)
