@@ -20,14 +20,16 @@ async function run() {
     // get inputs from workflow
     // specFile name
     const configPath = core.getInput('spec_file'); // user input, eg: `foo.spec' or `rpm/foo.spec'
+    const confBasename = path.basename(configPath); // always just `foo.spec`
     const artifactsPath = core.getInput('sources'); // user input directory of binary_artifacts, eg: `dist' or `cmd/build'
-    const basename = path.basename(configPath); // always just `foo.spec`
-    const specFile = {
-      srcFullPath: `/github/workspace/${configPath}`,
-      destFullPath: `/github/home/rpmbuild/SPECS/${basename}`,
+    const artiBasename = path.basename(artifactsPath);
+    //check artifacts path if relative or absolute
+    var specFile = {
+      srcFullPath: (path.isAbsolute(configPath) ? configPath : `/github/workspace/${configPath}`),
+      destFullPath: `/github/home/rpmbuild/SPECS/${confBasename}`,
     };
     const artifacts = {
-      srcFullPath: `/github/workspace/${artifactsPath}`,
+      srcFullPath: (path.isAbsolute(artifactsPath) ? artifactsPath : `/github/workspace/${artifactsPath}`),
       destFullPath: `/github/home/rpmbuild/SOURCES/`,
     };
     // Read spec file and get values
@@ -52,22 +54,21 @@ async function run() {
 
     // Copy spec file from path specFile to /github/home/rpmbuild/SPECS/
     await exec.exec(`cp ${specFile.srcFullPath} ${specFile.destFullPath}`);
-
+    await exec.exec(`mkdir -p ${artifacts.destFullPath}`);
     // Copy artifacts from build dir to sources dir
     process.env.GIT_DIR = '/github/workspace/.git';
-    await exec.exec(`ls -lah /github/workspace/ ${artifacts.srcFullPath}/ ${artifacts.destFullPath}`)
-    await fs.readdir(`${artifacts.srcFullPath}`, (err, files) => {
-      files.forEach(file => {
-        if (!file.isDirectory()) {
-          console.log(`debug: cp ${artifacts.srcFullPath}/${file} ${artifacts.destFullPath}/${file}`);
-          exec.exec(`cp ${artifacts.srcFullPath}/${file} ${artifacts.destFullPath}/${file}`)
-        }
-      });
-      if (err) {
-        core.setFailed(`action failed to read artifact dir with error: ${err}`);
-      }
-    })
+    await exec.exec(`ls -lah /github/workspace/ ${artifacts.srcFullPath}/`)
 
+    const files = fs.readdirSync(`${artifacts.srcFullPath}`)
+    for (const file of files) {
+      const joinedSourcePath = path.join(artifacts.srcFullPath, file)
+      const joinedDestPath = path.join(artifacts.destFullPath, file)
+      if (fs.existsSync(joinedSourcePath) && fs.lstatSync(joinedSourcePath).isFile()) {
+        console.log(`debug: cp ${joinedSourcePath} ${joinedDestPath}`);
+        await exec.exec(`cp ${joinedSourcePath} ${joinedDestPath}`)
+      }
+    }
+    //core.setFailed(`action failed to read artifact dir with error: ${err}`);
     await exec.exec(`ls -lah ${artifacts.srcFullPath}/ ${artifacts.destFullPath}`)
 
     // build binary only
