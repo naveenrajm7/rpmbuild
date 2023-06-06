@@ -27,7 +27,7 @@ async function run() {
       destFullPath: `/github/home/rpmbuild/SPECS/${basename}`,
     };
     const artifacts = {
-      srcFullPath: `/github/workspace/${artifactsPath}/`,
+      srcFullPath: `/github/workspace/${artifactsPath}`,
       destFullPath: `/github/home/rpmbuild/SOURCES/`,
     };
     // Read spec file and get values
@@ -53,12 +53,22 @@ async function run() {
     // Copy spec file from path specFile to /github/home/rpmbuild/SPECS/
     await exec.exec(`cp ${specFile.srcFullPath} ${specFile.destFullPath}`);
 
-    // Make the code in /github/workspace/ into a tar.gz, located in /github/home/rpmbuild/SOURCES/
-    const oldGitDir = process.env.GIT_DIR;
+    // Copy artifacts from build dir to sources dir
     process.env.GIT_DIR = '/github/workspace/.git';
-    await exec.exec(`ls -lah /github/workspace/ /github/workspace/dist/ /github/home/rpmbuild/SOURCES/`)
-    await exec.exec(`cp ${artifacts.srcFullPath} ${artifacts.destFullPath}`)
-    await exec.exec(`ls -lah /github/workspace/dist/ /github/home/rpmbuild/SOURCES/`)
+    await exec.exec(`ls -lah /github/workspace/ ${artifacts.srcFullPath}/ ${artifacts.destFullPath}`)
+    await fs.readdir(`${artifacts.srcFullPath}`, (err, files) => {
+      files.forEach(file => {
+        if (!file.isDirectory()) {
+          console.log(`debug: cp ${artifacts.srcFullPath}/${file} ${artifacts.destFullPath}/${file}`);
+          exec.exec(`cp ${artifacts.srcFullPath}/${file} ${artifacts.destFullPath}/${file}`)
+        }
+      });
+      if (err) {
+        core.setFailed(`action failed to read artifact dir with error: ${err}`);
+      }
+    })
+
+    await exec.exec(`ls -lah ${artifacts.srcFullPath}/ ${artifacts.destFullPath}`)
 
     // build binary only
     try {
@@ -106,7 +116,7 @@ async function run() {
     core.setOutput("rpm_content_type", "application/octet-stream");        // Content-type for Upload
 
   } catch (error) {
-    core.setFailed(error.message);
+    core.setFailed(error);
   }
 }
 

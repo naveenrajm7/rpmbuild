@@ -1,44 +1,48 @@
 {
-  "name": "container-toolkit-template",
-  "version": "0.0.0",
-  "description": "Container template action using actions/toolkit",
-  "main": "lib/main.js",
-  "scripts": {
-    "build": "tsc",
-    "format": "prettier --write **/*.ts",
-    "test": "jest"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/actions/container-toolkit-template.git"
-  },
-  "keywords": [
-    "actions",
-    "container",
-    "toolkit",
-    "setup"
-  ],
-  "author": "GitHub",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/actions/container-toolkit-template/issues"
-  },
-  "homepage": "https://github.com/actions/container-toolkit-template#readme",
-  "dependencies": {
-    "@actions/core": "^1.10.0",
-    "@actions/exec": "^1.1.1",
-    "@actions/github": "^5.1.1",
-    "@actions/io": "^1.1.2",
-    "@actions/tool-cache": "^2.0.1",
-    "@octokit/rest": "^17.1.4",
-    "@types/node": "^12.0.4",
-    "typescript": "^3.5.1"
-  },
-  "devDependencies": {
-    "@types/jest": "^24.0.13",
-    "jest": "^24.8.0",
-    "jest-circus": "^24.7.1",
-    "prettier": "^1.17.1",
-    "ts-jest": "^24.0.2"
-  }
+    "name": "rpmbuild-ts",
+    "version": "0.0.1",
+    "private": true,
+    "description": "TypeScript rpmbuild",
+    "main": "lib/main.js",
+    "scripts": {
+        "build": "tsc",
+        "format": "prettier --write '**/*.ts'",
+        "format-check": "prettier --check '**/*.ts'",
+        "lint": "eslint src/**/*.ts",
+        "package": "ncc build --source-map --license licenses.txt",
+        "test": "jest",
+        "all": "npm run build && npm run format && npm run lint && npm run package && npm test"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/GeoNet/docker-rpmbuild.gi"
+    },
+    "keywords": [
+        "actions",
+        "node",
+        "setup"
+    ],
+    "author": "",
+    "license": "GPL",
+    "dependencies": {
+        "@actions/core": "^1.10.0",
+        "@actions/exec": "^1.1.1",
+        "@actions/github": "^5.1.1",
+        "@actions/io": "^1.1.2",
+        "@actions/tool-cache": "^2.0.1",
+        "@octokit/rest": "^17.1.4"
+    },
+    "devDependencies": {
+        "@types/node": "^18.16.3",
+        "@typescript-eslint/parser": "^5.59.2",
+        "@vercel/ncc": "^0.36.1",
+        "eslint": "^8.39.0",
+        "eslint-plugin-github": "^4.7.0",
+        "eslint-plugin-jest": "^27.2.1",
+        "jest": "^29.5.0",
+        "js-yaml": "^4.1.0",
+        "prettier": "^2.8.8",
+        "ts-jest": "^29.1.0",
+        "typescript": "^5.0.4"
+    }
 }

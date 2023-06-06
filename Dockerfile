@@ -5,10 +5,12 @@ COPY . .
 
 # Installing tools needed for rpmbuild ,
 # depends on BuildRequires field in specfile, (TODO: take as input & install)
-RUN dnf install -y rpm-build rpmdevtools rpm-sign rpmlint git dnf-plugins-core
-RUN chmod +x /entrypoint.sh
+RUN dnf install -y rpm-build rpmdevtools rpm-sign rpmlint git dnf-plugins-core nodejs npm
+
+RUN npm install --production \
+    && npm run-script build
 
 # All remaining logic goes inside main.js ,
 # where we have access to both tools of this container and
 # contents of git repo at /github/workspace
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["node", "/lib/main.js"]
