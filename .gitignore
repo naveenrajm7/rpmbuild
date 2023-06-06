@@ -4,7 +4,6 @@
 *.swp
 
 # dependencies
-package-lock.json
 node_modules
 
 # System Files
