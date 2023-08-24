@@ -23,6 +23,8 @@ async function run() {
     const confBasename = path.basename(configPath); // always just `foo.spec`
     const artifactsPath = core.getInput('sources'); // user input directory of binary_artifacts, eg: `dist' or `cmd/build'
     const artiBasename = path.basename(artifactsPath);
+    const servicePath = core.getInput('service_file'); //Returns an empty string if the value is not defined.
+    const serviceBase = path.basename(servicePath);
     //check artifacts path if relative or absolute
     var specFile = {
       srcFullPath: (path.isAbsolute(configPath) ? configPath : `/github/workspace/${configPath}`),
@@ -32,6 +34,10 @@ async function run() {
       srcFullPath: (path.isAbsolute(artifactsPath) ? artifactsPath : `/github/workspace/${artifactsPath}`),
       destFullPath: `/github/home/rpmbuild/SOURCES/`,
     };
+    const serviceFile = {
+      srcFullPath: (path.isAbsolute(servicePath) ? servicePath : `/github/workspace/${servicePath}`),
+      destFullPath: `/github/home/rpmbuild/SOURCES/${serviceBase}`,
+    }
     // Read spec file and get values
     var data = fs.readFileSync(specFile.srcFullPath, 'utf8');
     let name = '';
@@ -54,6 +60,9 @@ async function run() {
 
     // Copy spec file from path specFile to /github/home/rpmbuild/SPECS/
     await exec.exec(`cp ${specFile.srcFullPath} ${specFile.destFullPath}`);
+    if (servicePath.length != '') {
+      await exec.exec(`cp ${serviceFile.srcFullPath} ${serviceFile.destFullPath}`);
+    }
     await exec.exec(`mkdir -p ${artifacts.destFullPath}`);
     // Copy artifacts from build dir to sources dir
     process.env.GIT_DIR = '/github/workspace/.git';

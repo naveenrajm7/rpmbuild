@@ -11,6 +11,10 @@ inputs:
     description: 'path to the spec file'
     required: true
     default: '*.spec'
+  service_file:
+    description: 'path to systemd service file'
+    required: false
+    default: ''
 
 outputs:
   binary_rpm_path:
