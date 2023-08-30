@@ -16,7 +16,8 @@ async function run() {
     const owner = context.repo.owner
     const repo = context.repo.repo
     const ref = context.ref
-
+    //get working directory
+    const workspace = process.env.GITHUB_WORKSPACE
     // get inputs from workflow
     // specFile name
     const configPath = core.getInput('spec_file'); // user input, eg: `foo.spec' or `rpm/foo.spec'
@@ -27,15 +28,15 @@ async function run() {
     const serviceBase = path.basename(servicePath);
     //check artifacts path if relative or absolute
     var specFile = {
-      srcFullPath: (path.isAbsolute(configPath) ? configPath : `/github/workspace/${configPath}`),
+      srcFullPath: (path.isAbsolute(configPath) ? configPath : `${workspace}/${configPath}`),
       destFullPath: `/github/home/rpmbuild/SPECS/${confBasename}`,
     };
     const artifacts = {
-      srcFullPath: (path.isAbsolute(artifactsPath) ? artifactsPath : `/github/workspace/${artifactsPath}`),
+      srcFullPath: (path.isAbsolute(artifactsPath) ? artifactsPath : `${workspace}${artifactsPath}`),
       destFullPath: `/github/home/rpmbuild/SOURCES/`,
     };
     const serviceFile = {
-      srcFullPath: (path.isAbsolute(servicePath) ? servicePath : `/github/workspace/${servicePath}`),
+      srcFullPath: (path.isAbsolute(servicePath) ? servicePath : `${workspace}${servicePath}`),
       destFullPath: `/github/home/rpmbuild/SOURCES/${serviceBase}`,
     }
     // Read spec file and get values
@@ -65,8 +66,8 @@ async function run() {
     }
     await exec.exec(`mkdir -p ${artifacts.destFullPath}`);
     // Copy artifacts from build dir to sources dir
-    process.env.GIT_DIR = '/github/workspace/.git';
-    await exec.exec(`ls -lah /github/workspace/ ${artifacts.srcFullPath}/`)
+    process.env.GIT_DIR = `${workspace}.git`;
+    await exec.exec(`ls -lah ${workspace} ${artifacts.srcFullPath}/`)
 
     const files = fs.readdirSync(`${artifacts.srcFullPath}`)
     for (const file of files) {
