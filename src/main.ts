@@ -32,11 +32,11 @@ async function run() {
       destFullPath: `/github/home/rpmbuild/SPECS/${confBasename}`,
     };
     const artifacts = {
-      srcFullPath: (path.isAbsolute(artifactsPath) ? artifactsPath : `${workspace}${artifactsPath}`),
+      srcFullPath: (path.isAbsolute(artifactsPath) ? artifactsPath : `${workspace}/${artifactsPath}`),
       destFullPath: `/github/home/rpmbuild/SOURCES/`,
     };
     const serviceFile = {
-      srcFullPath: (path.isAbsolute(servicePath) ? servicePath : `${workspace}${servicePath}`),
+      srcFullPath: (path.isAbsolute(servicePath) ? servicePath : `${workspace}/${servicePath}`),
       destFullPath: `/github/home/rpmbuild/SOURCES/${serviceBase}`,
     }
     // Read spec file and get values

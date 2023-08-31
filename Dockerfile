@@ -5,7 +5,7 @@ COPY . .
 
 # Installing tools needed for rpmbuild ,
 RUN dnf module enable -y nodejs:16
-RUN dnf install -y rpm-build rpmdevtools rpm-sign rpmlint git dnf-plugins-core nodejs npm make automake gcc gcc-c++ kernel-devel
+RUN dnf install -y rpm-build rpmdevtools rpm-sign rpmlint git dnf-plugins-core nodejs npm make automake gcc gcc-c++ kernel-devel python3
 
 RUN npm install \
     && npm run-script build
