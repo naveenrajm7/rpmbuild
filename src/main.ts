@@ -1,3 +1,5 @@
+import { InputList, InputListOpts } from "./inputlist";
+
 const core = require('@actions/core');
 const github = require('@actions/github');
 const exec = require('@actions/exec');
@@ -24,8 +26,7 @@ async function run() {
     const confBasename = path.basename(configPath); // always just `foo.spec`
     const artifactsPath = core.getInput('sources'); // user input directory of binary_artifacts, eg: `dist' or `cmd/build'
     const artiBasename = path.basename(artifactsPath);
-    const servicePath = core.getInput('service_file'); //Returns an empty string if the value is not defined.
-    const serviceBase = path.basename(servicePath);
+    const supplement = InputList.getInputList('supplement_sources', { ignoreComma: false, quote: true }); //Returns an empty string if the value is not defined.
     //check artifacts path if relative or absolute
     var specFile = {
       srcFullPath: (path.isAbsolute(configPath) ? configPath : `${workspace}/${configPath}`),
@@ -35,10 +36,7 @@ async function run() {
       srcFullPath: (path.isAbsolute(artifactsPath) ? artifactsPath : `${workspace}/${artifactsPath}`),
       destFullPath: `/github/home/rpmbuild/SOURCES/`,
     };
-    const serviceFile = {
-      srcFullPath: (path.isAbsolute(servicePath) ? servicePath : `${workspace}/${servicePath}`),
-      destFullPath: `/github/home/rpmbuild/SOURCES/${serviceBase}`,
-    }
+
     // Read spec file and get values
     var data = fs.readFileSync(specFile.srcFullPath, 'utf8');
     let name = '';
@@ -58,13 +56,18 @@ async function run() {
 
     // setup rpm tree
     await exec.exec('rpmdev-setuptree');
-
-    // Copy spec file from path specFile to /github/home/rpmbuild/SPECS/
+    // Copy spec file from path specFile to /github/home/rpmbuild/SPECS/$confBasename
     await exec.exec(`cp ${specFile.srcFullPath} ${specFile.destFullPath}`);
-    if (servicePath.length != '') {
-      await exec.exec(`cp ${serviceFile.srcFullPath} ${serviceFile.destFullPath}`);
-    }
+
     await exec.exec(`mkdir -p ${artifacts.destFullPath}`);
+    // Copy supplementary files array items to /github/home/rpmbuild/SOURCES/$artiBasename
+    if (supplement.length > 0) {
+      supplement.forEach(supplementPath => {
+        const src = (path.isAbsolute(supplementPath) ? supplementPath : `${workspace}/${supplementPath}`)
+        exec.exec(`cp ${src} /github/home/rpmbuild/SOURCES/${path.basename(src)}`);
+      });
+    }
+
     // Copy artifacts from build dir to sources dir
     process.env.GIT_DIR = `${workspace}.git`;
     await exec.exec(`ls -lah ${workspace} ${artifacts.srcFullPath}/`)
@@ -78,7 +81,7 @@ async function run() {
         await exec.exec(`cp ${joinedSourcePath} ${joinedDestPath}`)
       }
     }
-    //core.setFailed(`action failed to read artifact dir with error: ${err}`);
+
     await exec.exec(`ls -lah ${artifacts.srcFullPath}/ ${artifacts.destFullPath}`)
 
     // build binary only

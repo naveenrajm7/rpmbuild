@@ -11,8 +11,8 @@ inputs:
     description: 'path to the spec file'
     required: true
     default: '*.spec'
-  service_file:
-    description: 'path to systemd service file'
+  supplement_sources:
+    description: 'Array of paths to supplementary files to put in SOURCES rpmbuild directory'
     required: false
     default: ''
 

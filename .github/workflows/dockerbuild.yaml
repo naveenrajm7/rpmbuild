@@ -24,7 +24,7 @@ jobs:
       - name: install build tools
         run: |
           dnf module enable -y nodejs:16;
-          dnf install -y rpm-build rpmdevtools rpm-sign rpmlint git dnf-plugins-core nodejs npm make automake gcc gcc-c++ kernel-devel python3
+          dnf install -y rpm-build rpmdevtools rpm-sign rpmlint git dnf-plugins-core nodejs npm make automake gcc gcc-c++ kernel-devel python3 glibc
       - name: node install
         run: npm install
       - name: node build
