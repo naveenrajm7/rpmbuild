@@ -15,7 +15,7 @@ Create a workflow `.yml` file in your repositories `.github/workflows` directory
 
 - `sources`: Repo relative path to build directory containing your build artifacts (tar.gz files and systemd .service files) [**required**]
 - `spec_file`: The path to the spec file in your repo. [**required**]
-- `additional_repos`: A list of additional repositories (in JSON-array format) that you want enabled to build your rpm. [**optional**]
+- `supplement_sources`: A list of additional files to incorporate into the rpm sources directory
 
 ### Outputs
 
@@ -25,7 +25,7 @@ Create a workflow `.yml` file in your repositories `.github/workflows` directory
 - `binary_rpm_name`: name of Source RPM file
 - `rpm_content_type`: Content-type for RPM Upload
 
-This generated RPMS and SRPMS can be used in two ways.
+This generated RPMS can be used in two ways.
 
 1. Upload as build artifact
     You can use GitHub Action [`@actions/upload-artifact`](https://www.github.com/actions/upload-artifact)
@@ -48,10 +48,10 @@ jobs:
 
     - name: build RPM package
       id: rpm
-      uses: naveenrajm7/rpmbuild@master
+      uses: geonet/naveenrajm7-rpmbuild-action@el8
       with:
+        sources: dist/
         spec_file: "cello.spec"
-        additional_repos: "['centos-release-scl', 'http://www.percona.com/downloads/percona-release/redhat/0.1-3/percona-release-0.1-3.noarch.rpm']"
 
     - name: Upload artifact
       uses: actions/upload-artifact@v1.0.0
@@ -105,10 +105,10 @@ jobs:
 
         - name: build RPM package
           id: rpm_build
-          uses: naveenrajm7/rpmbuild@master
+          uses: geonet/naveenrajm7-rpmbuild-action@el8
           with:
-              spec_file: "cello.spec"
-
+            sources: dist/
+            spec_file: "cello.spec"
         - name: Upload Release Asset
           id: upload-release-asset
           uses: actions/upload-release-asset@v1
@@ -121,10 +121,6 @@ jobs:
               asset_content_type: ${{ steps.rpm_build.outputs.rpm_content_type }}
 ```
 
-#### The above release uploads SRPM like
-
-![artifact_image](assets/upload_release_asset.png)
-
 Note on distribution:
 If your RPMs are distribution specific like el7 or el8.
 
@@ -133,8 +129,9 @@ If your RPMs are distribution specific like el7 or el8.
 ```yaml
 - name: build RPM package
     id: rpm_build
-    uses: geonet/docker-rpmbuild@stream8
+    uses: geonet/naveenrajm7-rpmbuild-action@el8
     with:
+        sources: dist/
         spec_file: "cello.spec"
 ```
 

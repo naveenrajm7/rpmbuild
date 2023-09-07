@@ -7,7 +7,7 @@ COPY . .
 RUN dnf module enable -y nodejs:16
 RUN dnf install -y rpm-build rpmdevtools rpm-sign rpmlint git dnf-plugins-core nodejs npm make automake gcc gcc-c++ kernel-devel python3 glibc
 
-RUN npm install \
+RUN npm install --production \
     && npm run-script build
 
 # All remaining logic goes inside main.js ,
