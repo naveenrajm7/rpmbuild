@@ -16,9 +16,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     container:
-      image: quay.io/centos/centos:stream8
-      volumes:
-        - my_docker_volume:/volume_mount
+      image: ghcr.io/geonet/base-images/centos:stream8
     steps:
       - uses: actions/checkout@v3
       - name: install build tools
@@ -32,9 +30,9 @@ jobs:
       - name: run fixture test rpm build
         run: node lib/main.js
         env:
-          INPUT_SOURCES: /home/runner/work/docker-rpmbuild/docker-rpmbuild/test/sources
-          INPUT_SPEC_FILE: /home/runner/work/docker-rpmbuild/docker-rpmbuild/test/spec/fixture.spec
-          INPUT_SERVICE_FILE: /home/runner/work/docker-rpmbuild/docker-rpmbuild/test/fixture.service
+          INPUT_SOURCES: "${{github.workspace}}/test/sources"
+          INPUT_SPEC_FILE: "${{github.workspace}}/test/spec/fixture.spec"
+          INPUT_SERVICE_FILE: "${{github.workspace}}/test/fixture.service"
 
   # build:
   #   uses: GeoNet/Actions/.github/workflows/reusable-docker-build.yml@main

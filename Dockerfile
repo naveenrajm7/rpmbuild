@@ -1,4 +1,4 @@
-FROM quay.io/centos/centos:stream8
+FROM ghcr.io/geonet/base-images/centos:stream8
 
 # Copying all contents of rpmbuild repo inside container
 COPY . .
