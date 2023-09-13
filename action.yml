@@ -29,8 +29,9 @@ outputs:
     description: 'Content-type for Upload'
 
 runs:
+  pre-if: ./pre.sh
   using: 'docker'
-  image: 'Dockerfile'
+  image: 'Dockerfile.el8'
   args:
     - ${{ inputs.spec_file }}
 

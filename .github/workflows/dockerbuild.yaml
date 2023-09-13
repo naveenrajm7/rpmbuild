@@ -14,15 +14,32 @@ permissions:
 
 jobs:
   test:
+    strategy:
+      matrix:
+        image:
+          - centos:stream8
+          - centos:centos7
+          - centos:stream9
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/geonet/base-images/centos:stream8
+      image: ghcr.io/geonet/base-images/${{ matrix.image }}
     steps:
       - uses: actions/checkout@v3
-      - name: install build tools
+      - name: install build tools el8
         run: |
           dnf module enable -y nodejs:16;
           dnf install -y rpm-build rpmdevtools rpm-sign rpmlint git dnf-plugins-core nodejs npm make automake gcc gcc-c++ kernel-devel python3 glibc
+        if: ${{ matrix.image == 'centos:stream8' }}
+      - name: install build tools el9
+        run: |
+          dnf install -y rpm-build rpmdevtools rpm-sign rpmlint git dnf-plugins-core nodejs npm make automake gcc gcc-c++ kernel-devel python3 glibc
+        if: ${{ matrix.image == 'centos:stream9' }}
+      - name: install build tools el7
+        run: |
+          yum install -y rpm-build rpmdevtools rpmlint rpm-sign make git autoconf automake createrepo gcc gcc-c++ tar yum-utils python
+          curl -O https://nodejs.org/dist/v16.20.2/node-v16.20.2-linux-x64.tar.xz
+          tar --strip-components 1 -xvf node-v* -C /usr/local
+        if: ${{ matrix.image == 'centos:centos7' }}
       - name: node install
         run: npm install
       - name: node build
@@ -33,6 +50,8 @@ jobs:
           INPUT_SOURCES: "${{github.workspace}}/test/sources"
           INPUT_SPEC_FILE: "${{github.workspace}}/test/spec/fixture.spec"
           INPUT_SERVICE_FILE: "${{github.workspace}}/test/fixture.service"
+      - name: install rpm
+        run: 'rpm -i /github/home/rpmbuild/RPMS/noarch/fixture-0.0.1-1.*.noarch.rpm'
 
   # build:
   #   uses: GeoNet/Actions/.github/workflows/reusable-docker-build.yml@main
