@@ -1,0 +1,40 @@
+name: 'RPM Build el7'
+description: 'Build RPMs from spec file and upload it as Artifact or Release Asset'
+author: 'GeoNet'
+
+inputs:
+  sources:
+    description: 'path to the build artifact directory'
+    required: true
+    default: 'build'
+  spec_file:
+    description: 'path to the spec file'
+    required: true
+    default: '*.spec'
+  supplement_sources:
+    description: 'Array of paths to supplementary files to put in SOURCES rpmbuild directory'
+    required: false
+    default: ''
+
+outputs:
+  binary_rpm_path:
+    description: 'path to Source RPM file'
+  binary_rpm_dir_path:
+    description: 'path to  SRPMS directory'
+  binary_rpm_name:
+    description: 'name of Source RPM file'
+  rpm_dir_path:
+    description: 'path to RPMS directory'
+  rpm_content_type:
+    description: 'Content-type for Upload'
+
+runs:
+  pre-if: ./pre.sh
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.spec_file }}
+
+branding:
+  icon: 'package'
+  color: 'red'

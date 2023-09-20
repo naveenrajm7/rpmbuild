@@ -1,11 +1,12 @@
-FROM ghcr.io/geonet/base-images/centos:stream9
+FROM ghcr.io/geonet/base-images/centos:centos7
 
 # Copying all contents of rpmbuild repo inside container
 COPY . .
 
 # Installing tools needed for rpmbuild ,
-#default in stream9 is node 16
-RUN dnf install -y rpm-build rpmdevtools rpm-sign rpmlint git dnf-plugins-core nodejs npm make automake gcc gcc-c++ kernel-devel python3 glibc
+RUN curl -O https://nodejs.org/dist/v16.20.2/node-v16.20.2-linux-x64.tar.xz \
+    && tar --strip-components 1 -xvf node-v* -C /usr/local
+RUN yum install -y rpm-build rpmdevtools rpmlint rpm-sign make git autoconf automake createrepo gcc gcc-c++ tar yum-utils python python3
 
 RUN npm install \
     && npm run-script build

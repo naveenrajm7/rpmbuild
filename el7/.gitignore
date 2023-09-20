@@ -1,0 +1,15 @@
+# See http://help.github.com/ignore-files/ for more about ignoring files.
+
+# editor
+*.swp
+
+# dependencies
+node_modules
+
+# System Files
+.DS_Store
+Thumbs.db
+
+# typescript gets compiled to js and placed under lib/
+# if you build locally, don't let you commit it
+lib/

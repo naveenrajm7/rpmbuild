@@ -13,51 +13,33 @@ permissions:
   id-token: write
 
 jobs:
-  test:
-    strategy:
-      matrix:
-        image:
-          - centos:stream8
-          - centos:centos7
-          - centos:stream9
+  test_el7:
     runs-on: ubuntu-latest
-    container:
-      image: ghcr.io/geonet/base-images/${{ matrix.image }}
     steps:
       - uses: actions/checkout@v3
-      - name: install build tools el8
-        run: |
-          dnf module enable -y nodejs:16;
-          dnf install -y rpm-build rpmdevtools rpm-sign rpmlint git dnf-plugins-core nodejs npm make automake gcc gcc-c++ kernel-devel python3 glibc
-        if: ${{ matrix.image == 'centos:stream8' }}
-      - name: install build tools el9
-        run: |
-          dnf install -y rpm-build rpmdevtools rpm-sign rpmlint git dnf-plugins-core nodejs npm make automake gcc gcc-c++ kernel-devel python3 glibc
-        if: ${{ matrix.image == 'centos:stream9' }}
-      - name: install build tools el7
-        run: |
-          yum install -y rpm-build rpmdevtools rpmlint rpm-sign make git autoconf automake createrepo gcc gcc-c++ tar yum-utils python
-          curl -O https://nodejs.org/dist/v16.20.2/node-v16.20.2-linux-x64.tar.xz
-          tar --strip-components 1 -xvf node-v* -C /usr/local
-        if: ${{ matrix.image == 'centos:centos7' }}
-      - name: node install
-        run: npm install
-      - name: node build
-        run: npm run-script build
-      - name: run fixture test rpm build
-        run: node lib/main.js
-        env:
-          INPUT_SOURCES: "${{github.workspace}}/test/sources"
-          INPUT_SPEC_FILE: "${{github.workspace}}/test/spec/fixture.spec"
-          INPUT_SERVICE_FILE: "${{github.workspace}}/test/fixture.service"
-      - name: install rpm
-        run: 'rpm -i /github/home/rpmbuild/RPMS/noarch/fixture-0.0.1-1.*.noarch.rpm'
-
-  # build:
-  #   uses: GeoNet/Actions/.github/workflows/reusable-docker-build.yml@main
-  #   with:
-  #     context: .
-  #     dockerfile: ./Dockerfile
-  #     imageName: centos8-rpmbuild
-  #     platforms: 'linux/amd64,linux/arm64'
-  #     push: ${{ github.ref_name == 'stream8' }}
+      - name: run fixture test rpm build el7
+        uses: "./el7"
+        with:
+          sources: "${{github.workspace}}/el7/test/sources"
+          spec_file: "${{github.workspace}}/el7/test/spec/fixture.spec"
+          supplement_sources: "${{github.workspace}}/el7/test/fixture.service"
+  test_el8:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: run fixture test rpm build el8
+        uses: "./el8"
+        with:
+          sources: "${{github.workspace}}/el8/test/sources"
+          spec_file: "${{github.workspace}}/el8/test/spec/fixture.spec"
+          supplement_sources: "${{github.workspace}}/el8/test/fixture.service"
+  test_el9:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: run fixture test rpm build el9
+        uses: "./el9"
+        with:
+          sources: "${{github.workspace}}/el9/test/sources"
+          spec_file: "${{github.workspace}}/el9/test/spec/fixture.spec"
+          supplement_sources: "${{github.workspace}}/el9/test/fixture.service"

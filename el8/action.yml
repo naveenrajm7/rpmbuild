@@ -1,4 +1,4 @@
-name: 'RPM Build'
+name: 'RPM Build el8'
 description: 'Build RPMs from spec file and upload it as Artifact or Release Asset'
 author: 'GeoNet'
 
@@ -31,7 +31,7 @@ outputs:
 runs:
   pre-if: ./pre.sh
   using: 'docker'
-  image: 'Dockerfile.el8'
+  image: 'Dockerfile'
   args:
     - ${{ inputs.spec_file }}
 
