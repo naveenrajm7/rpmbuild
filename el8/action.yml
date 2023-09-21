@@ -1,22 +1,27 @@
-name: 'RPM Build'
+name: 'RPM Build el8'
 description: 'Build RPMs from spec file and upload it as Artifact or Release Asset'
-author: 'Naveenraj M'
+author: 'GeoNet'
 
-inputs: 
+inputs:
+  sources:
+    description: 'path to the build artifact directory'
+    required: true
+    default: 'build'
   spec_file:
     description: 'path to the spec file'
     required: true
-    default: '*.spec'                     #Any spec file in top 
-  additional_repos:
-    description: 'A list of additional repositories to enable'
+    default: '*.spec'
+  supplement_sources:
+    description: 'Array of paths to supplementary files to put in SOURCES rpmbuild directory'
     required: false
+    default: ''
 
 outputs:
-  source_rpm_path:
+  binary_rpm_path:
     description: 'path to Source RPM file'
-  source_rpm_dir_path:
+  binary_rpm_dir_path:
     description: 'path to  SRPMS directory'
-  source_rpm_name:
+  binary_rpm_name:
     description: 'name of Source RPM file'
   rpm_dir_path:
     description: 'path to RPMS directory'
@@ -24,11 +29,12 @@ outputs:
     description: 'Content-type for Upload'
 
 runs:
+  pre-if: ./pre.sh
   using: 'docker'
   image: 'Dockerfile'
+  args:
+    - ${{ inputs.spec_file }}
 
 branding:
   icon: 'package'
   color: 'red'
-
-  
