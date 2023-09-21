@@ -9,11 +9,10 @@ on:
 permissions:
   packages: write
   contents: write
-  pull-requests: write
   id-token: write
 
 jobs:
-  test_el7:
+  test-el7:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -23,7 +22,12 @@ jobs:
           sources: "${{github.workspace}}/el7/test/sources"
           spec_file: "${{github.workspace}}/el7/test/spec/fixture.spec"
           supplement_sources: "${{github.workspace}}/el7/test/fixture.service"
-  test_el8:
+      - uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3.1.2
+        with:
+          name: geonet_packages_el7
+          path: rpmbuild/RPMS/noarch
+          retention-days: 1
+  test-el8:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -33,7 +37,12 @@ jobs:
           sources: "${{github.workspace}}/el8/test/sources"
           spec_file: "${{github.workspace}}/el8/test/spec/fixture.spec"
           supplement_sources: "${{github.workspace}}/el8/test/fixture.service"
-  test_el9:
+      - uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3.1.2
+        with:
+          name: geonet_packages_el8
+          path: rpmbuild/RPMS/noarch
+          retention-days: 1
+  test-el9:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -43,3 +52,41 @@ jobs:
           sources: "${{github.workspace}}/el9/test/sources"
           spec_file: "${{github.workspace}}/el9/test/spec/fixture.spec"
           supplement_sources: "${{github.workspace}}/el9/test/fixture.service"
+      - uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3.1.2
+        with:
+          name: geonet_packages_el9
+          path: rpmbuild/RPMS/noarch
+          retention-days: 1
+  install-el7:
+    runs-on: ubuntu-latest
+    container: ghcr.io/geonet/base-images/centos:centos7
+    needs: test-el7
+    steps:
+      - uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # v3.0.2
+        with:
+          name: geonet_packages_el7
+          path: ./tars
+      - run: |
+          rpm -i ./tars/fixture-0.0.1-1.el7.noarch.rpm
+  install-el8:
+    runs-on: ubuntu-latest
+    container: ghcr.io/geonet/base-images/centos:stream8
+    needs: test-el8
+    steps:
+      - uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # v3.0.2
+        with:
+          name: geonet_packages_el8
+          path: ./tars
+      - run: |
+          rpm -i ./tars/fixture-0.0.1-1.el8.noarch.rpm
+  install-el9:
+    runs-on: ubuntu-latest
+    container: ghcr.io/geonet/base-images/centos:stream9
+    needs: test-el9
+    steps:
+      - uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # v3.0.2
+        with:
+          name: geonet_packages_el9
+          path: ./tars
+      - run: |
+          rpm -i ./tars/fixture-0.0.1-1.el9.noarch.rpm
