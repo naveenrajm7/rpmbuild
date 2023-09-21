@@ -68,21 +68,17 @@ async function run() {
       });
     }
 
-    // Copy artifacts from build dir to sources dir
-    process.env.GIT_DIR = `${workspace}.git`;
-    await exec.exec(`ls -lah ${workspace} ${artifacts.srcFullPath}/`)
-
     const files = fs.readdirSync(`${artifacts.srcFullPath}`)
     for (const file of files) {
+      core.debug(`fetching ${file}`);
+      core.debug(`copying to ${artifacts.destFullPath}`);
       const joinedSourcePath = path.join(artifacts.srcFullPath, file)
       const joinedDestPath = path.join(artifacts.destFullPath, file)
       if (fs.existsSync(joinedSourcePath) && fs.lstatSync(joinedSourcePath).isFile()) {
-        console.log(`debug: cp ${joinedSourcePath} ${joinedDestPath}`);
+        console.log(`running: cp ${joinedSourcePath} ${joinedDestPath}`);
         await exec.exec(`cp ${joinedSourcePath} ${joinedDestPath}`)
       }
     }
-
-    await exec.exec(`ls -lah ${artifacts.srcFullPath}/ ${artifacts.destFullPath}`)
 
     // build binary only
     try {
