@@ -1,11 +1,9 @@
-FROM ghcr.io/geonet/base-images/centos:stream9
+FROM ghcr.io/geonet/base-images/rpmbuild-centos-stream9
 
 # Copying all contents of rpmbuild repo inside container
 COPY . .
 
 # Installing tools needed for rpmbuild ,
-RUN dnf install -y rpm-build rpmdevtools rpm-sign rpmlint git dnf-plugins-core nodejs npm make automake gcc gcc-c++ kernel-devel python3 glibc
-
 RUN npm install \
     && npm run-script build
 
